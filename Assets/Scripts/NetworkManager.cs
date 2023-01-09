@@ -113,6 +113,7 @@ public class NetworkManager : MonoBehaviour
         //fetch map from server asynchronously and update map when download is complete
         using (WebClient client = new WebClient()) {
             string o = getFromServer("/map");
+            Debug.Log("downloaded map");
             lc.updateMap(lc.serializeOtherPlayers(o));
         }
     }

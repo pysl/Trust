@@ -22,7 +22,7 @@ public class LevelController : MonoBehaviour
     public Text APText;
     public Text playeridText;
     public bool gameLoopRunning = false;
-    public float rps; //requests per second
+    public float rps = 10.0f; //requests per second
 
 
     /*
@@ -48,6 +48,7 @@ public class LevelController : MonoBehaviour
         int playerHealth = playerStats.health;
         int playerAP = playerStats.AP;
         PlayerPrefs.SetInt("playerid", playerid);
+        rps = settings.rps;
 
 
         GenerateMap(mapSize[0], mapSize[1]);
@@ -56,22 +57,6 @@ public class LevelController : MonoBehaviour
         playeridText.text = "PlayerID: " + playerid.ToString();
         nm.playerid = playerid;
         player.spawn(playerSpawn[0], playerSpawn[1], playerid, playerColor, playerHealth, playerAP); // spawn player at playerSpawn with playerid, playerColor, and playerHealth
-        //for every other player in otherPlayers, spawn them at their spawn location with their playerid, color, and health
-        playerStats[] otherPlayersStats = JsonConvert.DeserializeObject<playerStats[]>(otherPlayers);
-        
-        foreach (playerStats op in otherPlayersStats)
-        {
-            int[] otherPlayerSpawn = {op.x, op.y};
-            int otherPlayerid = op.playerid;
-            Color otherPlayerColor = new Color(op.colorR, op.colorG, op.colorB, 1);
-            int otherPlayerHealth = op.health;
-            int otherPlayerAP = op.AP;
-            Spot spot = findSpot(otherPlayerSpawn[0], otherPlayerSpawn[1]);
-            spot.playerid = otherPlayerid;
-            spot.color = otherPlayerColor;
-            spot.health = otherPlayerHealth;
-            spot.reloadColor();
-        }
         
         //enter into game loop
         StartCoroutine(gameLoop());
@@ -81,7 +66,6 @@ public class LevelController : MonoBehaviour
 
     //updates the players position
     public void updateMap(playerStats[] otherPlayersStats) {
-        //playerStats[] otherPlayersStats = serializeOtherPlayers(nm.getMap());
         Spot[] spots = new Spot[mapSize[0] * mapSize[1]];
         for (int x = 0; x < mapSize[0]; x++)
         {
@@ -121,6 +105,9 @@ public class LevelController : MonoBehaviour
             if (op.playerid == player.playerid)
             {
                 player.updatePlayer(op.health, op.AP);
+            } else {
+                Spot opSpot = findSpot(op.x, op.y);
+                opSpot.health = op.health;
             }
         }
     }
@@ -224,6 +211,7 @@ public class Settings
 {
     public int[] mapSize;
     public int range;
+    public int rps;
 }
 
 public class playerStats

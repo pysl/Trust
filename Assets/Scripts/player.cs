@@ -94,10 +94,10 @@ public class player : MonoBehaviour
         int tID = target.playerid;
         target.health--;
         int tHealth = target.health;
-        target.playerid = -1;
+        //target.playerid = -1;
         networkManager.sendAttack(tID, tHealth, playerAP);
         audioManager.playSound("attack");
-        target.reloadColor();
+        //target.reloadColor();
     }
 
 
@@ -145,14 +145,11 @@ public class player : MonoBehaviour
     void select(int x, int y) { 
         Spot newSpot = levelController.findSpot(x, y);
         if (newSpot != null) {
-            selectedSpot.reloadColor();
             selectedSpot = newSpot;
             Vector2 RealWorldpos = new Vector2(selectedSpot.transform.position.x, selectedSpot.transform.position.y);
 
             cam.target = selectedSpot;
             
-        } else {
-            notificationManager.say("Spot (" + x + ", " + y + ") does not exist.");
         }
     }
 

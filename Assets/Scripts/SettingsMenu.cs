@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class SettingsMenu : MonoBehaviour
 {
     private LevelController lc;
-    [SerializeField] private InputField rpsInput;
+
     [SerializeField] private Dropdown resolutionDropdown; 
     [SerializeField] private Toggle fullscreenToggle;
     // Start is called before the first frame update
@@ -13,9 +13,6 @@ public class SettingsMenu : MonoBehaviour
         lc = GameObject.Find("LevelController").GetComponent<LevelController>();
         fullscreenToggle.isOn = Screen.fullScreen;
     }
-
-
-    public void SetRPS() => lc.rps = float.Parse(rpsInput.text); // set rps to the value of rpsInput
 
     public void SetResolution() {
         /*
