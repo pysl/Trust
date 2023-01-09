@@ -27,6 +27,7 @@ var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));
 var mapSize = settings.mapSize;
 var range = settings.range;
 var isDebug = settings.isDebug;
+var rps = settings.rps;
 
 
 
@@ -34,7 +35,7 @@ var isDebug = settings.isDebug;
 
 app.get('/settings', (req, res) => {
   //res.send('{"mapSize":[10,10],"range":5}');
-  res.send('{"mapSize":['+ mapSize +','+ mapSize +'],"range":'+ range +', "isDebug":'+ isDebug +'}');
+  res.send('{"mapSize":['+ mapSize +','+ mapSize +'],"range":'+ range +', "isDebug":'+ isDebug +', "rps":'+ rps +'}');
   res.end();
   console.log('Settings requested');
 });
