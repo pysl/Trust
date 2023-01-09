@@ -11,6 +11,6 @@ Simply go to www.nahbruhfr.org/trust/ to download the latest server software (or
 I did the vast majority of this project in 2 days, so there are a lot of issues. Many of these issues are small bugs but a lot of them are structural issues. I will try to fix these issues as I have time, but I am not sure when I will have time to do so. If you would like to help, feel free to make a pull request.
 
 ### Some notable issues:
-[+] I use http requests for the multiplayer aspect of the game. (I know this is dumb but it was late and it worked.)
-[+] An issue with the size of players remaining on tiles that they have left.
-[+] The server will crash randomly following a lookup for an item that doesn't exist in the database.
+[ ] I use http requests for the multiplayer aspect of the game. (I know this is dumb but it was late and it worked.)
+[ ] An issue with the size of players remaining on tiles that they have left.
+[ ] The server will crash randomly following a lookup for an item that doesn't exist in the database.
