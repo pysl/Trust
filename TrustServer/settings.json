@@ -1,0 +1,7 @@
+{
+    "mapSize":[10,10],
+    "range":5,
+    "secondsBetweenRounds":10,
+    "allowDebug":false,
+    "maxPlayers":10
+}
