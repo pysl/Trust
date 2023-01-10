@@ -1726,6 +1726,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spot: {fileID: 6121988518703384648, guid: 003d982ab685a8b4d9938c97ffe64a3c, type: 3}
   playerGO: {fileID: 6938502016776267102, guid: 8f1f00aee79106a40a0ddb5ca8153ba0, type: 3}
+  debugGO: {fileID: 656490394}
+  debugMenuGO: {fileID: 164395321}
   player: {fileID: 0}
   mapSize: 
   moveRange: 0

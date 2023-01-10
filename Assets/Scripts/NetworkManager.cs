@@ -46,6 +46,47 @@ public class NetworkManager : MonoBehaviour
             joinMatch(playerid);
         }
     }
+
+    public void DEBUG_setAP(int newAP) {
+        //post newAP and playerid to /debug_setAP
+        try {
+            using (WebClient client = new WebClient())
+            {
+                byte[] o = client.UploadValues(url + "/debug_setAP", "POST", new System.Collections.Specialized.NameValueCollection() { { "playerid", playerid.ToString() }, { "AP", newAP.ToString() } });
+                //loop through byte array and convert to string
+                string oString = "";
+                foreach (byte b in o) {
+                    oString += (char)b;
+                }
+                //StartCoroutine(updateMap());
+            }
+        } catch (WebException) {
+            //redirect to main menu
+            SceneManager.LoadScene(2);
+        }
+    }
+
+    public void DEBUG_setHealth(int newHealth) {
+        //post newHealth and playerid to /debug_setHealth
+        try {
+            using (WebClient client = new WebClient())
+            {
+                byte[] o = client.UploadValues(url + "/debug_setHealth", "POST", new System.Collections.Specialized.NameValueCollection() { { "playerid", playerid.ToString() }, { "health", newHealth.ToString() } });
+                //loop through byte array and convert to string
+                string oString = "";
+                foreach (byte b in o) {
+                    oString += (char)b;
+                }
+                //StartCoroutine(updateMap());
+            }
+        } catch (WebException) {
+            //redirect to main menu
+            SceneManager.LoadScene(2);
+        }
+    }
+
+
+
     public void sendAttack(int targetID, int targetHealth, int playerAP) {
         //post "playerid": playerid, "targetid": targetID, "targetHealth": targetHealth to /attack
         try {
@@ -113,7 +154,6 @@ public class NetworkManager : MonoBehaviour
         //fetch map from server asynchronously and update map when download is complete
         using (WebClient client = new WebClient()) {
             string o = getFromServer("/map");
-            Debug.Log("downloaded map");
             lc.updateMap(lc.serializeOtherPlayers(o));
         }
     }

@@ -7,6 +7,8 @@ public class LevelController : MonoBehaviour
 { //i want to fucking kill myself
     [SerializeField] GameObject spot;
     [SerializeField] GameObject playerGO;
+    [SerializeField] GameObject debugGO;
+    [SerializeField] GameObject debugMenuGO;
 
     private NetworkManager nm;
     public player player;
@@ -40,7 +42,14 @@ public class LevelController : MonoBehaviour
 
         mapSize = settings.mapSize;
         moveRange = (float) settings.range;
-
+        
+        if (settings.allowDebug) {
+            debugGO.SetActive(true);
+            debugMenuGO.SetActive(true);
+        } else {
+            debugGO.SetActive(false);
+            debugMenuGO.SetActive(false);
+        }
 
         int[] playerSpawn = {playerStats.x, playerStats.y};
         int playerid = playerStats.playerid;
@@ -212,6 +221,7 @@ public class Settings
     public int[] mapSize;
     public int range;
     public int rps;
+    public bool allowDebug;
 }
 
 public class playerStats

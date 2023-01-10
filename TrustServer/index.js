@@ -23,11 +23,12 @@ db.serialize(function() {
 
 
 //get settings from settings.json file and store them in variables
-var settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));  
-var mapSize = settings.mapSize;
-var range = settings.range;
-var isDebug = settings.isDebug;
-var rps = settings.rps;
+const settings = JSON.parse(fs.readFileSync('settings.json', 'utf8'));  
+const mapSize = settings.mapSize;
+const range = settings.range;
+const allowDebug = settings.allowDebug;
+const rps = settings.rps;
+const port = settings.port;
 
 
 
@@ -35,7 +36,7 @@ var rps = settings.rps;
 
 app.get('/settings', (req, res) => {
   //res.send('{"mapSize":[10,10],"range":5}');
-  res.send('{"mapSize":['+ mapSize +','+ mapSize +'],"range":'+ range +', "isDebug":'+ isDebug +', "rps":'+ rps +'}');
+  res.send('{"mapSize":['+ mapSize +','+ mapSize +'],"range":'+ range +', "allowDebug":'+ allowDebug +', "rps":'+ rps +'}');
   res.end();
   console.log('Settings requested');
 });
@@ -49,6 +50,31 @@ app.get('/map', (req, res) => {
     res.end();
   });
 });
+
+app.post('/debug_setAP', bodyParser.urlencoded({extended: false}), (req, res) => {
+  //add AP to a player
+  if(allowDebug) {
+    db.serialize(function() {
+      db.run("UPDATE players SET AP = " + req.body.AP + " WHERE playerid = " + req.body.playerid);
+      res.send('[true]');
+      res.end();
+    });
+    console.log('DEBUG: Player ' + req.body.playerid + ' AP set to ' + req.body.AP);
+  }
+});
+
+app.post('/debug_setHealth', bodyParser.urlencoded({extended: false}), (req, res) => {
+  //add health to a player
+  if(allowDebug) {
+    db.serialize(function() {
+      db.run("UPDATE players SET health = " + req.body.health + " WHERE playerid = " + req.body.playerid);
+      res.send('[true]');
+      res.end();
+    });
+    console.log('DEBUG: Player ' + req.body.playerid + ' health set to ' + req.body.health);
+  }
+});
+
 
 app.post('/join', bodyParser.urlencoded({extended: false}), (req, res) => {
   db.all("SELECT * FROM players WHERE playerid = " + req.body.playerid, function(err, rows) {
@@ -190,5 +216,5 @@ console.log(`
 -------------------------------------------`)
 
 
-app.listen(3000, () => console.log('Server started on port 3000'));
+app.listen(settings.port, () => console.log('Server started on port ' + settings.port));
 run();
