@@ -77,6 +77,7 @@ app.post('/debug_setHealth', bodyParser.urlencoded({extended: false}), (req, res
 
 
 app.post('/join', bodyParser.urlencoded({extended: false}), (req, res) => {
+  //filter out players in database by playerid to find if the player is already in the database. if they are, return their data. if not, add them to the database
   db.all("SELECT * FROM players WHERE playerid = " + req.body.playerid, function(err, rows) {
     if (err) console.log(err);
     if (rows == "") {
