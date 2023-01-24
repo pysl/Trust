@@ -36,6 +36,19 @@ public class MainMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return)) joinGame();
         if (Input.GetKeyDown(KeyCode.F11)) Screen.fullScreen = !Screen.fullScreen;
     }
+    public void openMenu(GameObject menu)
+    {
+        menu.SetActive(true);
+    }
+    public void closeMenu(GameObject menu)
+    {
+        menu.SetActive(false);
+    }
+    public void quitGame()
+    {
+        Application.Quit();
+        Debug.Log("Quit");
+    }
     public void joinGame()
     {
         //save ip and port in PlayerPrefs

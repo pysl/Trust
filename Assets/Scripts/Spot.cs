@@ -20,9 +20,6 @@ public class Spot : MonoBehaviour
 
     
     void Update() {
-        if (playerid != -1) {
-            color = new Color(1, 1, 1, 1);
-        }
         if (health >= 3) {
             transform.localScale = new Vector3(1f, 1f, 1f);
         } else if (health == 2) {
@@ -30,7 +27,7 @@ public class Spot : MonoBehaviour
         } else if (health == 1) {
             transform.localScale = new Vector3(0.5f, 0.5f, 1);
         } else {
-            //transform.localScale = new Vector3(1f, 1f, 1f);
+            transform.localScale = new Vector3(1f, 1f, 1f);
         }
     }
 

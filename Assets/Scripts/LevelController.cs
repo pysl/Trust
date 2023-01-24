@@ -63,7 +63,7 @@ public class LevelController : MonoBehaviour
         GenerateMap(mapSize[0], mapSize[1]);
         playerGO = Instantiate(playerGO, new Vector2(0, 0), Quaternion.identity); // spawn player object at 0, 0
         player = playerGO.GetComponent<player>();
-        playeridText.text = "PlayerID: " + playerid.ToString();
+        //playeridText.text = "PlayerID: " + playerid.ToString();
         nm.playerid = playerid;
         player.spawn(playerSpawn[0], playerSpawn[1], playerid, playerColor, playerHealth, playerAP); // spawn player at playerSpawn with playerid, playerColor, and playerHealth
         
@@ -86,6 +86,8 @@ public class LevelController : MonoBehaviour
             }
         }
 
+
+
         //remove all spots that appear in otherPlayersStats 
         foreach (playerStats op in otherPlayersStats)
         {
@@ -102,7 +104,8 @@ public class LevelController : MonoBehaviour
             {
                 s.playerid = -1;
                 s.health = 0;
-                spot.transform.localScale = new Vector2(1.0f, 1.0f);
+                spot.transform.localScale = new Vector3(1, 1, 1);
+                s.color = new Color(1, 1, 1, 1);
                 s.reloadColor();
             }
         }

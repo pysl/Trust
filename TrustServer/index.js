@@ -142,10 +142,11 @@ app.post('/attack', bodyParser.urlencoded({extended: false}), (req, res) => {
 
     db.run("UPDATE players SET health = " + req.body.targetHealth + " WHERE playerid = " + req.body.targetid); 
     console.log('Player ' + req.body.targetid + ' health: ' + req.body.targetHealth);
-    console.log('eval: ' + (req.body.targetHealth <= 0))
+    console.log('eval: ' + (req.body.targetHealth <= 0));
+    
     if (req.body.targetHealth <= 0) {
       //set health back to 3, color back to white, and playerid back to -1
-      db.run("UPDATE players SET health = 3, colorR = 1, colorG = 1, colorB = 1, playerid = -1 WHERE playerid = " + req.body.targetid);
+      db.run("DELETE FROM players WHERE health = 0");
       console.log('Player ' + req.body.targetid + ' died');
     } else {
     }
@@ -211,11 +212,21 @@ function run() {
  }, settings.secondsBetweenRounds * 1000);
 }
 
+
+function removeDeadPlayers() {
+  setInterval(function() {
+    //if any players have a playerid of -1, delete them
+    db.run("DELETE FROM players WHERE health = 0");
+  }, 500);
+}
+
+
 console.log(`
 ▀█▀ █▀█ █░█ █▀ ▀█▀   █▀ █▀▀ █▀█ █░█ █▀▀ █▀█
 ░█░ █▀▄ █▄█ ▄█ ░█░   ▄█ ██▄ █▀▄ ▀▄▀ ██▄ █▀▄
 -------------------------------------------`)
 
 
-app.listen(settings.port, () => console.log('Server started on port ' + settings.port));
+app.listen(port, () => console.log('Server started on port ' + port));
+removeDeadPlayers();
 run();
