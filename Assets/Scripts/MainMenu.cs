@@ -10,6 +10,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private InputField playerid;
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private Slider progressBar;
+    [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject joinPanel;
+    [SerializeField] private GameObject optionsPanel;
 
     void Start()
     {
@@ -22,15 +25,19 @@ public class MainMenu : MonoBehaviour
 
     void Update () {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            Debug.Log(loadingScreen.activeSelf);
             if (loadingScreen.activeSelf) {
                 loadingScreen.SetActive(false);
                 //stop loading scene
                 Debug.Log("Stoping loading");
                 SceneManager.UnloadSceneAsync(1);
+            } else if(joinPanel.activeSelf) {
+                joinPanel.SetActive(false);
+                mainPanel.SetActive(true);
+            } else if (optionsPanel.activeSelf) {
+                optionsPanel.SetActive(false);
+                mainPanel.SetActive(true);
             } else {
-                Debug.Log("Quit");
-                Application.Quit();
+                quitGame();
             }
         }
         if (Input.GetKeyDown(KeyCode.Return)) joinGame();

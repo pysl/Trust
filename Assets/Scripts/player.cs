@@ -166,7 +166,7 @@ public class player : MonoBehaviour
                 notificationManager.say("You atatcked (" + x + ", " + y + ").");
                 attack(x, y);
             } else {
-                networkManager.move(x, y);
+                StartCoroutine(networkManager.move(x, y));
                 //uninhabitting old spot
                 spot.playerid = -1;
                 spot.color = new Color(1, 1, 1, 1);
