@@ -38,22 +38,17 @@ public class player : MonoBehaviour
     */
     public void updatePlayer(int health, int playerAP) {
         if (health != this.health) { //heath updates
-            if (health == 0) {
-                playerid = -1;
-                color = new Color(1, 1, 1, 1);
-                spot.transform.localScale = new Vector3(1, 1, 1);
-                spot.reloadColor();
-                notificationManager.say("Player at (" + x + ", " + y + ") died.");
+            
+            
+            if (health > this.health) { //this should never happen unless debug is on
+                notificationManager.say("Player at (" + x + ", " + y + ") healed " + (health - this.health) + " health.");
+                this.health = health;
             } else {
-                if (health > this.health) { //this should never happen unless debug is on
-                    notificationManager.say("Player at (" + x + ", " + y + ") healed " + (health - this.health) + " health.");
-                    this.health = health;
-                } else {
-                    notificationManager.say("Player at (" + x + ", " + y + ") took " + (this.health - health) + " damage.");
-                    audioManager.playSound("hurt");
-                    this.health = health;
-                }
+                notificationManager.say("Player at (" + x + ", " + y + ") took " + (this.health - health) + " damage.");
+                audioManager.playSound("hurt");
+                this.health = health;
             }
+            
             if (this.health >= 3) {
                 hearts[0].color = new Color(1, 1, 1, 1);
                 hearts[1].color = new Color(1, 1, 1, 1);
@@ -90,14 +85,17 @@ public class player : MonoBehaviour
 
 
     void attack(int x, int y) {
+        if (x == this.x && y == this.y) { //if player is attacking themselves
+            notificationManager.say("You can't attack yourself!");
+            return;
+        }
         Spot target = levelController.findSpot(x, y);
         int tID = target.playerid;
         target.health--;
         int tHealth = target.health;
-        //target.playerid = -1;
-        networkManager.sendAttack(tID, tHealth, playerAP);
+        StartCoroutine(networkManager.sendAttack(tID, tHealth, playerAP));
         audioManager.playSound("attack");
-        //target.reloadColor();
+        
     }
 
 
@@ -162,27 +160,21 @@ public class player : MonoBehaviour
         if(playerAP > 0) {
             if (selectedSpot != spot && distaceFrom(x, y, spot.x, spot.y) <= levelController.moveRange) {
                 playerAP--;
-            if (selectedSpot.playerid != -1 && selectedSpot.health > 0) {
-                notificationManager.say("You atatcked (" + x + ", " + y + ").");
-                attack(x, y);
-            } else {
-                StartCoroutine(networkManager.move(x, y));
-                //uninhabitting old spot
-                spot.playerid = -1;
-                spot.color = new Color(1, 1, 1, 1);
-                spot.transform.localScale = new Vector2(1.0f, 1.0f);
-                spot.reloadColor(); 
+                if (selectedSpot.playerid != -1 && selectedSpot.health > 0) {
+                    notificationManager.say("You atatcked (" + x + ", " + y + ").");
+                    attack(x, y);
+                    
+                } else {
+                    StartCoroutine(networkManager.move(x, y));
+                    
+                    spot = selectedSpot;
+                    spot.playerid = playerid;
 
-                //inhabitting new spot
-                spot = selectedSpot;
-                spot.playerid = playerid;
-                spot.color = color;
-                spot.reloadColor();
-                this.x = x;
-                this.y = y;
-                audioManager.playSound("move");
-                select(x, y);
-            }
+                    this.x = x;
+                    this.y = y;
+                    audioManager.playSound("move");
+                    select(x, y);
+                }
             } else
                 notificationManager.say("You cannot inhabit spot (" + x + ", " + y + ").");
         } else
@@ -206,8 +198,15 @@ public class player : MonoBehaviour
     {
         APText.text = playerAP.ToString(); 
         //send to main menu if died
-        if(spot.playerid == -1) SceneManager.LoadScene(3);
-
+        if(spot.playerid == -1) { //SceneManager.LoadScene(3);
+            Spot t = levelController.findPlayer(playerid); 
+            if (t) {
+                spot = t;
+                select(spot.x, spot.y);
+            } else {
+                SceneManager.LoadScene(3);
+            }
+        }
         //pause menu
         if (Input.GetKeyDown(KeyCode.Escape)) {
             if (!pauseMenu.isPaused) { 

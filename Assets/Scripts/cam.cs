@@ -8,7 +8,9 @@ public class cam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 targetPos = Vector3.Lerp(transform.position, target.transform.position, smoothSpeed);
-        transform.position = new Vector3(targetPos.x, targetPos.y, -10);
+        if (target != null) {
+            Vector3 targetPos = Vector3.Lerp(transform.position, target.transform.position, smoothSpeed);
+            transform.position = new Vector3(targetPos.x, targetPos.y, -10);
+        } 
     }
 }

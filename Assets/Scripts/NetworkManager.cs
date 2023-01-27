@@ -10,7 +10,7 @@ public class NetworkManager : MonoBehaviour
     public string url = "";
     private LevelController lc;
     public int playerid;
-    public byte[] results;
+    public string results;
     string otherPlayers;
     // Start is called before the first frame update
     void Start()
@@ -22,9 +22,8 @@ public class NetworkManager : MonoBehaviour
 
         StartCoroutine(pingServer(url));
         
+
         
-
-
         if (PlayerPrefs.GetInt("playerid") != -1) playerid = PlayerPrefs.GetInt("playerid");
         else playerid = -1;
         
@@ -33,7 +32,7 @@ public class NetworkManager : MonoBehaviour
         lc = GameObject.Find("LevelController").GetComponent<LevelController>();
         
         //download settings and map
-        settings = getFromServer("/settings");
+        StartCoroutine(getSettings());
         otherPlayers = getFromServer("/map"); 
 
         if (playerid == -1) {
@@ -43,7 +42,8 @@ public class NetworkManager : MonoBehaviour
         } else {
             //playerid is set
             //redirect to joinMatch()
-            joinMatch(playerid);
+            StartCoroutine(joinMatch(playerid));
+            //joinMatch(playerid);
         }
     }
 
@@ -147,7 +147,24 @@ public class NetworkManager : MonoBehaviour
 
     public string joinNewMatch() => getFromServer("/newjoin");
 
-    
+    public string getFromServer(string path) {
+        UnityWebRequest request = UnityWebRequest.Get(url + path);
+        request.SendWebRequest();
+
+        while (!request.isDone) {
+            //wait for request to finish
+        }
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {
+            //redirect to main menu
+            SceneManager.LoadScene(2);
+        }
+
+        string output = request.downloadHandler.text;
+        //remove first and last characters
+        //output = output.Substring(1, output.Length - 2);
+        return output;
+    }
 
     public IEnumerator move(int x, int y) {
         UnityWebRequest request = UnityWebRequest.Post(url + "/move", new Dictionary<string, string> { { "playerid", playerid.ToString() }, { "x", x.ToString() }, { "y", y.ToString() }, { "AP", lc.player.playerAP.ToString() } });
@@ -159,13 +176,17 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    //makes a post request to server
-    private string postToServer(string name, string data, string address) {
-        string oString = "";
-            foreach (byte b in results) {
-                oString += (char)b;
-            }
-        return oString;
+    private IEnumerator getSettings() {
+        UnityWebRequest request = UnityWebRequest.Get(url + "/settings");
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {
+            //redirect to main menu
+            SceneManager.LoadScene(2);
+        } else {
+            // Or retrieve results as binary data
+            settings = request.downloadHandler.text;
+        }
     }
 
     private IEnumerator postToServerIEnumerator(string name, string data, string address) {
@@ -182,29 +203,6 @@ public class NetworkManager : MonoBehaviour
             byte[] results = request.downloadHandler.data;
         }
     }
-    //makes a get request to server
-    private string getFromServer(string address) {
-        StartCoroutine(getFromServerIEnumerator(address));
-        string oString = "";
-
-        //loop through byte array and convert to string
-        foreach (byte b in results) {
-            oString += (char)b;
-        }
-        return oString;
-    }
-    private IEnumerator getFromServerIEnumerator(string address) {
-        UnityWebRequest request = UnityWebRequest.Get(url + address);
-        yield return request.SendWebRequest();
-        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {
-            Debug.LogError(request.error);
-        } else {
-            // Show results as text
-            Debug.Log(request.downloadHandler.text);
-            // Or retrieve results as binary data
-            results = request.downloadHandler.data;
-            
-        }
-    }
+    
 
 }
